@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>弹幕视频示例</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.css">
+    <style>
+        .dplayer-danmaku .dplayer-danmaku-item {
+            font-size: 24px; /* 调整弹幕字体大小 */
+            opacity: 0.8; /* 调整弹幕透明度 */
+        }
+    </style>
+</head>
+<body>
+    <div id="dplayer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.js"></script>
+    <script>
+        // 初始化弹幕数组
+        const danmakuData = [
+            // 示例弹幕数据，格式为 { text: '内容', color: '#颜色值', type: '弹幕类型', time: 秒数 }
+            { text: '示例弹幕1', color: '#ff0000', type: 'right', time: 1 },
+            { text: '示例弹幕2', color: '#00ff00', type: 'right', time: 2 },
+            { text: '示例弹幕3', color: '#0000ff', type: 'right', time: 3 },
+        ];
+
+        // 初始化 DPlayer
+        const dp = new DPlayer({
+            container: document.getElementById('dplayer'),
+            video: {
+                url: './src/assets/过掉守门员1.mp4', // 本地视频文件路径
+                pic: './path/to/local/thumbnail.jpg' // 本地视频缩略图路径
+            },
+            danmaku: {
+                id: 'video-id', // 弹幕池的 ID，可以用视频 ID 替代
+                api: '', // 这里留空，不使用后端 API
+                unlimited: true // 开启离线弹幕模式
+            }
+        });
+
+        // 等待 DPlayer 加载完成后再加载弹幕数据
+        dp.on('loadeddata', function () {
+            dp.danmaku.load({
+                comments: danmakuData // 加载本地弹幕数据
+            });
+        });
+
+        // 处理全屏事件
+        dp.on('fullscreen', function () {
+            dp.danmaku.resize();
+        });
+
+        dp.on('fullscreen_cancel', function () {
+            dp.danmaku.resize();
+        });
+
+        // 示例发送弹幕
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const currentTime = dp.video.currentTime; // 获取当前视频时间
+                const newDanmaku = {
+                    text: 'Hello, world!',
+                    color: '#ff0000',
+                    type: 'right', // 弹幕类型：右侧滚动、顶部、底部等
+                    time: currentTime // 弹幕出现的时间
+                };
+                dp.danmaku.send(newDanmaku);
+                danmakuData.push(newDanmaku); // 将新弹幕添加到本地弹幕数组中
+            }
+        });
+    </script>
+</body>
+</html>

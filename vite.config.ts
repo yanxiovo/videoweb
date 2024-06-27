@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/yanxi': {
-        target: 'http://3005eb2c.r8.cpolar.top/',  // 要代理的目标地址
+        target: 'http://3eef688c.r28.cpolar.top/',  // 要代理的目标地址
         changeOrigin: true,
          rewrite: (path) => path.replace(/^\/yanxi/, '')
       }
@@ -17,5 +17,21 @@ export default defineConfig({
       '@': resolve('./src')
     },
 
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // 确保 WASM 文件可以正确加载
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === 'ffmpeg-core.wasm') {
+            return 'assets/[name]-[hash][extname]';
+          }
+          return 'assets/[name]-[hash].[extname]';
+        }
+      }
+    },
+    commonjsOptions: {
+      esmExternals: true 
+   },
   }
 })

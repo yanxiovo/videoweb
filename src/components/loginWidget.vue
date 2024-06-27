@@ -214,11 +214,11 @@ i:hover {
 .icon-close-login {
   position: relative;
   z-index:999;
-  transform:translate(522px,-280px)
+  transform:translate(-5.5rem,2rem);
 }
 .icon-close-reg{
   position: relative;
   z-index:999;
-  transform: translate(522px,-400px);
+  transform: translate(-5.5rem,2rem);
 }
 </style>

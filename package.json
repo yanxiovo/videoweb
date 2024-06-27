@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "@ffmpeg/core": "^0.12.6",
+    "@ffmpeg/ffmpeg": "^0.12.10",
     "@types/node": "^20.12.10",
     "axios": "^1.7.2",
     "barrage-ui": "^1.4.1",
@@ -18,6 +20,7 @@
     "danmaku-plus": "^1.0.10",
     "dashjs": "^4.7.4",
     "element-plus": "^2.7.2",
+    "ffmpeg": "^0.0.4",
     "jsonwebtoken": "^9.0.2",
     "plyr": "^3.7.8",
     "screenfull": "^6.0.2",

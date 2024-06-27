@@ -1,5 +1,7 @@
 <template>
-  <div class="home_navbar" id="navbar">
+  <div class="home_navbar" id="navbar" @loginEvent="handleAvatar">
+    <div v-if="isVisible" class="overlay"></div>
+    <loginWidget v-if="isVisible" @closeEvent="changeVisible"></loginWidget>
     <div class="left-container">
       <el-menu mode="horizontal" :ellipsis="false" :style="{ border: 'none', 'margin-right': '0px' }"
         active-text-color="#ffd04b">
@@ -15,22 +17,23 @@
     </div>
 
     <div class="search-container">
-      <search_bar></search_bar>
+      <search_bar v-if="!isSearchShow"></search_bar>
     </div>
 
     <div class="right-container">
 
       <el-menu mode="horizontal" :style="{ border: 'none' }" :ellipsis="false">
         <el-menu-item>
-          <div class="avatar-container" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
-            <el-avatar ref="avatar" @click.native="handleAvatar" class="neg-login" v-if="!isLogin">
+          <div class="avatar-container" @mouseenter.native="handleMouseEnter" @mouseleave.native ="handleMouseLeave">
+            <el-avatar ref="avatar" @click.native="handleClick" class="neg-login" v-if="!isLogin">
               登录
             </el-avatar>
             <el-avatar ref="avatar" :style="{
               Transform: isHovered ? 'scale(2.1) translate(-10px, 15px)' : 'none',
             }" @click.native="handleAvatar" v-if="isLogin" :src="avatar">
             </el-avatar>
-            <person_widget v-if="isHovered && isLogin"></person_widget>
+            <person_widget v-if="isLogin && isHovered" :avatar="avatar" >
+            </person_widget>
           </div>
         </el-menu-item>
         <el-menu-item>
@@ -94,17 +97,22 @@ import person_widget from './personWidget.vue'
 import { el } from 'element-plus/es/locales.mjs';
 import SvgIcon from './iconfont/SvgIcon.vue';
 import axios from 'axios';
+import loginWidget from '@/components/loginWidget.vue'
+import { isVisible } from 'element-plus/es/utils/index.mjs';
 export default {
   components: {
     search_bar,
     person_widget,
     ElIconSHome,
+    loginWidget
   },
   data() {
     return {
       isHovered: false,
       isLogin: false,
       avatar: '',
+      isVisible: false,
+      isSearchShow: false,
     }
   },
   methods: {
@@ -112,26 +120,57 @@ export default {
       this.$emit('loginEvent')
     },
     handleMouseEnter() {
-      this.isHovered = true
+      console.log('Mouse entered');
+      this.isHovered = true;
+      console.log(this.isHovered)
     },
     handleMouseLeave() {
-      this.isHovered = false
+      console.log('Mouse left');
+      this.isHovered = false;
+      console.log(this.isHovered)
+    },
+    changeVisible() {
+      this.isVisible = !this.isVisible
+      console.log(this.isVisible)
+    },
+    handleClick() {
+      this.handleAvatar();
+
+      this.changeVisible();
     },
   },
   mounted() {
     const token = localStorage.getItem('token')
+    const keyword = this.$route.params.keyword;
     const headers = {
       'Authorization': token,
     }
-    console.log(token)
     if (token) {
       this.isLogin = true
       console.log('test1')
       axios.get('/yanxi//User/User-detail', { headers }).then(res => {
         const data = res.data.data;
         localStorage.setItem('avatar', data.avatar);
-        this.avatar = `data:image/png;base64,${data.avatar}`;
       })
+      const avatar = localStorage.getItem('avatar');
+      const fileExtension = avatar.split('.').pop();
+      axios.get(`/yanxi//User/OfferUserFile`, {
+        params: {
+          filePath: avatar
+        },
+        responseType: 'arraybuffer'
+      }).then(res => { 
+        const binaryData = res.data;
+        const base64String = btoa(
+          new Uint8Array(binaryData)
+            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+
+        this.avatar = `data:image/${fileExtension};base64,${base64String}`;
+      })
+    }
+    if (keyword) {
+      this.isSearchShow = true;
     }
   }
 }
@@ -238,7 +277,10 @@ div {
   text-align: center;
 }
 
-
+.search-container {
+  width: 500px;
+  height:40px;
+}
 .el-button .el-icon {
   font-size: 20px;
 }
@@ -291,5 +333,17 @@ div {
 
 .centered-icon {
   margin: 0 auto;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* 黑色透明背景色 */
+  z-index: 999;
+  /* 确保覆盖其他内容 */
 }
 </style>

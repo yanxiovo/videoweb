@@ -3,7 +3,7 @@
         <homeNavbar></homeNavbar>
         <div><el-divider></el-divider></div>
         <div class="search-container">
-            <el-input placeholder="请输入关键字搜索" v-model="searchText" clearable>
+            <el-input placeholder="请输入关键字搜索" v-model="searchText" clearable @keydown.native.enter="handleEnter">
                 <template #prefix>
                     <el-icon color="rgb(50,192,240)" size="20px">
                         <Search />
@@ -193,7 +193,7 @@ export default {
                 { text: 'Lv等级由高到低' },
                 { text: 'Lv等级由低到高' }
             ],
-            videoSort: ['default', 'newest', 'mostPlay', 'mostBarrage','mostFavorite'],
+            videoSort: ['default', 'mostPlay', 'newest', 'mostBarrage','mostFavorite'],
             videoList1: [],
             selectedButton: 0,
             totalPage: 280,
@@ -209,6 +209,7 @@ export default {
             if (this.type === 'videoSort') {
                 this.sortOrder = this.videoSort[index];
                 console.log(this.sortOrder);
+                this.getvideoList();
             }
         },
         formatTime(timeString) {
@@ -216,6 +217,35 @@ export default {
                 return timeString.substring(3);  // 去除代表小时的数字以及后面的冒号
             }
             return timeString;  // 如果不是以 "00:" 开头，则保持原样返回
+        },
+        getvideoList() {
+            const token = localStorage.getItem('token');
+            const keyword = this.$route.params.keyword;
+            this.videoList1 = [];
+            axios.get('/yanxi/video/SearchVideos', {
+                headers: {
+                    'Authorization': token
+                },
+                params: {
+                    videoNums: 10,
+                    offset: 0,
+                    key: this.keyword,
+                    sortOrder: this.sortOrder
+
+                }
+            }).then(res => {
+                const videodata = res.data.data;
+                this.videoList1 = videodata
+                this.videoList1 = this.videoList1.map(item => ({
+                    ...item,
+                    Cover: `data:image/png;base64,${item.Cover}`,
+                    Duration: this.formatTime(item.Duration)
+                }));
+            })
+        },
+        handleEnter() {
+            window.location.href = `#/search/keyword=${this.searchText}`;
+            window.location.reload();
         }
     },
     mounted() {
@@ -225,29 +255,9 @@ export default {
         console.log(this.keyword);
         if (token ) {
             if (this.type === 'videoSort') {
-                axios.get('/yanxi/video/SearchVideos', {
-                    headers: {
-                        'Authorization': token
-                    },
-                    params: {
-                        videoNums: 10,
-                        offset: 0,
-                        key: this.keyword,
-                        sortOrder: this.sortOrder
-
-                    }
-                }).then(res => {
-                    const videodata = res.data.data;
-                     console.log(data)
-                })
+                this.getvideoList();
             }
         }
-        console.log(data);
-        this.videoList1 = data.map(item => ({
-            ...item,
-            Cover: `data:image/png;base64,${item.Cover}`,
-            Duration: this.formatTime(item.Duration)
-        }));
         console.log(this.videoList1);
     },
     computed: {

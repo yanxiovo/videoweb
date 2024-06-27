@@ -47,7 +47,7 @@ export default {
         // 初始化 Dash.js 播放器
         dash.initialize(
           video,
-          `http://3005eb2c.r8.cpolar.top/video/OfferMpd?filePath=${this.basePath}`,
+          `http://3eef688c.r28.cpolar.top/video/OfferMpd?filePath=${this.basePath}`,
           true
         );
 

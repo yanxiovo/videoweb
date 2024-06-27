@@ -1,14 +1,12 @@
 <template>
   <div>
     <div class="header">
-      <home_navbar @loginEvent="changeVisible"></home_navbar>
+      <home_navbar ></home_navbar>
     </div>
     <div class="content">
-      <div v-if="isVisible" class="overlay"></div>
       <home_channel></home_channel>
       <recPlate></recPlate>
     </div>
-    <loginWidget v-if="isVisible" @closeEvent="changeVisible"></loginWidget>
   </div>
 </template>
 
@@ -20,13 +18,11 @@ import loginWidget from '@/components/loginWidget.vue'
 export default {
   data() {
     return {
-      isVisible: false
+
     }
   },
   methods: {
-    changeVisible() {
-      this.isVisible = !this.isVisible
-    },
+
   },
   components: {
     home_channel,

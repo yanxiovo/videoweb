@@ -120,10 +120,26 @@ export default {
         this.videoList = res.data.data.map(item => {
           return {
             ...item,
-            Cover: `data:image/png;base64,${item.Cover}`,
-            Duration: this.formatTime(item.Duration)
+            Duration: this.formatTime(item.Duration),
+            Cover: ''
           }
         });
+        for (let item of this.videoList) {
+          const fileExtension = item.CoverPath.split('.').pop();
+          axios.get('/yanxi/video/VideoCover', {params: {
+            coverPath: item.CoverPath
+          },
+            responseType: 'arraybuffer'
+          }).then(res => {
+            const binaryData = res.data;
+            const base64String = btoa(
+              new Uint8Array(binaryData)
+                .reduce((data, byte) => data + String.fromCharCode(byte), '')
+            );
+            item.Cover = `data:image/${fileExtension};base64,${base64String}`;
+          }
+            )
+        }
         console.log(this.videoList);
       })
     const token = localStorage.getItem('token');

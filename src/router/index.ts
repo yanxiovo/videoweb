@@ -4,7 +4,7 @@ import Test from '../views/test.vue'
 import Account from '../views/account.vue'
 import Video from '../views/video.vue'
 import Search from '../views/search.vue'
-
+import Member from '../views/member.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -32,6 +32,10 @@ const router = createRouter({
     {
       path: '/search/keyword=:keyword',
       component: Search,
+    },
+    {
+      path: '/member',
+      component: Member,
     }
   ],
 })

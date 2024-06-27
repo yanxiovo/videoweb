@@ -5,18 +5,18 @@
 
     <div class="video_detail">
       <div class="video_header">
-        <div class="title">这是视频标题</div>
+        <div class="title">{{ this.Title }}</div>
         <div class="video_info">
           <div class="info_item">
             <img src="../assets/icons/播放量.png" class="icons" />
-            <div class="text">21.5万</div>
+            <div class="text">{{ this.CntViews }}</div>
           </div>
           <div class="info_item">
             <img src="../assets/icons/弹幕.png" class="icons" :style="{ height: '15px', color: '#707070' }" />
-            <div class="text">722</div>
+            <div class="text">{{ this.CntBarrages }}</div>
           </div>
           <div class="info_item">
-            <div class="text">2024-03-20 18:01:14</div>
+            <div class="text">{{ this.videoTime }}</div>
           </div>
           <div class="info_item">
             <img src="../assets/icons/禁止.png" class="icons" :style="{ height: '12px', width: '12px' }" />
@@ -77,7 +77,8 @@
               <el-switch v-model="isEpisodic" style="margin-left: 1rem" />
             </div>
           </div>
-          <div class="videoItem">
+          <div class="videoItem" v-for="item in 20">
+            <span class="videoTime">11:20</span>
             <div>
               <el-image style="width:12rem;height:6.75rem"></el-image>
             </div>
@@ -95,20 +96,20 @@
               </div>
               <div class="videoRightFooter">
 
-<span>
-                    <el-icon size="15px" :style="{ marginRight: '0.25rem'}">
-                      <SvgIcon iconName="icon-bofangshu" />
-                    </el-icon>
-                    <el-text>23.2k</el-text>
-</span>
-            
+                <span>
+                  <el-icon size="15px" :style="{ marginRight: '0.25rem'}">
+                    <SvgIcon iconName="icon-bofangshu" />
+                  </el-icon>
+                  <el-text>23.2k</el-text>
+                </span>
 
-<span>
-                    <el-icon size="15px" :style="{ marginRight: '0.25rem' }">
-                      <SvgIcon iconName="icon-danmushu" />
-                    </el-icon>
-                   <el-text> 2317</el-text>
-</span>
+
+                <span>
+                  <el-icon size="15px" :style="{ marginRight: '0.25rem' }">
+                    <SvgIcon iconName="icon-danmushu" />
+                  </el-icon>
+                  <el-text> 2317</el-text>
+                </span>
 
               </div>
             </div>
@@ -148,7 +149,7 @@
               <el-icon size="35px">
                 <SvgIcon iconName="icon-zan1" />
               </el-icon>
-              1212
+              {{ this.Likes }}
             </el-link>
           </div>
           <div class="footerBtn">
@@ -156,7 +157,7 @@
               <el-icon size="35px">
                 <SvgIcon iconName="icon-Bbi" />
               </el-icon>
-              1212
+              {{ this.Shells }}
             </el-link>
           </div>
           <div class="footerBtn">
@@ -164,7 +165,7 @@
               <el-icon size="35px">
                 <SvgIcon iconName="icon-shoucangtianchong" />
               </el-icon>
-              1212
+              {{this.CntFavorites}}
             </el-link>
           </div>
           <div class="footerBtn">
@@ -172,7 +173,7 @@
               <el-icon size="35px">
                 <SvgIcon iconName="icon-arrow-" />
               </el-icon>
-              1212
+              {{ this.CntShares }}
             </el-link>
           </div>
         </div>
@@ -219,7 +220,11 @@
           <div class="AddComment">
             <el-avatar :size="45"> user </el-avatar>
             <el-input :style="{ width: '1000px', marginLeft: '20px',height: '50px' }" maxLength="100"
-              placeholder="留下友善的评论吧!" class="custom-input"> </el-input>
+              @focus="isButtonShow = !isButtonShow" placeholder="留下友善的评论吧!" class="custom-input" v-model="topComment">
+            </el-input>
+            <el-button type="primary" size="large"
+              :style="{ 'background-color': 'rgb(0, 174, 236)', color: 'white',marginLeft: '90%',width:'5rem',marginTop:'10px' }"
+              @click="addComment(-1,topComment)" v-show="isButtonShow">发布</el-button>
           </div>
           <div class="comments" v-for="comment in commentsList" :key="comment.CommentID">
             <el-avatar :size="45">user</el-avatar>
@@ -254,10 +259,10 @@
               <el-icon size="25px" :style="{ marginLeft: '5px' }">
                 <SvgIcon iconName="icon-ic_userlevel_4" />
               </el-icon>
-              <el-text
-                :style="{ marginLeft: '10px', fontSize: '16px' }">辅助不跟，跟了也保不住的环境。要求射手一个人面对中野射辅甚至五人联动还能抗压不死，同时还要求发育起来打输出！</el-text>
-              <el-text
-                :style="{ marginLeft: '35px', fontSize: '16px', flex: '1 0 calc(100% - 35px)' }">你们都这么要求了，加强射手不是应该的吗！？怎么有些人就开始闹起来了</el-text>
+              <el-text :style="{ marginLeft: '10px', fontSize: '16px',flex:'1' }">{{ reply.Content.slice(0,30)
+                }}</el-text>
+              <el-text :style="{ marginLeft: '35px', fontSize: '16px', flex: '1 0 calc(100% - 35px)' }">{{
+                reply.Content.slice(30)}}</el-text>
               <div class="commentFooter" :style="{ marginLeft: '35px' }">
                 <el-text size="small" :style="{ color: 'rgb(148, 153, 160)', marginTop: '5px' }">{{ reply.CreatedAt
                   }}</el-text>
@@ -280,7 +285,11 @@
             <div v-show="findCommentID(this.replyToCommentID,comment)" class="replyInput">
               <el-avatar :size="45">user</el-avatar>
               <el-input :style="{ width: '910px', marginLeft: '20px' }" maxLength="100" placeholder="回复"
-                v-model="userReply" type="textarea" :autosize="{ minRows: 2, maxRows: 5 }"></el-input>
+                v-model="userReply" type="textarea" :autosize="{ minRows: 2, maxRows: 5 }" @focus="isFooterBtnShow = !isFooterBtnShow"></el-input>
+                <el-button type="primary" size="large"
+                  :style="{ 'background-color': 'rgb(0, 174, 236)', color: 'white',  width: '5rem', marginTop: '10px' }"
+                  @click="addComment(this.replyToCommentID, userReply)" >发布</el-button>
+
             </div>
           </div>
 
@@ -297,6 +306,7 @@ import axios from 'axios'
 import video_player from '@/components/videoPlayer.vue'
 import jsonData from '@/assets/response_1716970547913.json';
 import { transform } from 'typescript';
+import { title } from 'process';
 export default {
   data() {
     return {
@@ -304,6 +314,8 @@ export default {
       videoID: null,
       userReply: '',
       isEpisodic: true,
+      isButtonShow: false,
+      topComment: '',
       BarrageList: [
         {
           time: '0:00',
@@ -455,7 +467,18 @@ export default {
       newestChecked: false,
       hotestChecked: false,
       commentsList: [],
-      replyToCommentID: null
+      isFooterBtnshow: false,
+      replyToCommentID: null,
+      Duration: '',
+      Title: '',
+      Description: '',
+      Shells: 0,
+      Likes: 0,
+      CntViews: 0,
+      CntShares: 0,
+      CntFavorites: 0,
+      CntBarrages: 0,
+      videoTime: '',
     }
   },
   components: {
@@ -464,23 +487,25 @@ export default {
   },
   mounted() {
     this.videoID = this.$route.params.id;
-    const data = jsonData.data.map(item => {
-      return {
-        ...item,
-        CreatedAt: this.formatTimeAgo(item.CreatedAt),
-        Replies: item.Replies.map(reply => {
-          return {
-            ...reply,
-            CreatedAt: this.formatTimeAgo(reply.CreatedAt),
-          }
-        })
-      }
-    })
-    console.log(data);
-    this.commentsList = data;
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    this.getDetail(token);
+    this.getComments(token);
 
   },
   methods: {
+    formatDateTime(isoString) {
+      const date = new Date(isoString);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    },
     formatTimeAgo(timestamp) {
       const now = new Date();
       const time = new Date(timestamp);
@@ -514,6 +539,8 @@ export default {
     },
     // 根据 CommentID 切换对应评论的 Like 属性值，并处理互斥关系
     toggleLike(commentID) {
+      const id = this.$route.params.id;
+      const token = localStorage.getItem('token');
       // 1. 遍历 commentsList 查找对应的 CommentID
       for (let comment of this.commentsList) {
         if (comment.CommentID === commentID) {
@@ -526,8 +553,26 @@ export default {
           }
           if (comment.Like) {
             comment.Likes++;
+            axios.put(`/Comment/${id}/LikeOrDislikeComment`, {
+              params: {
+                CommentID: commentID,
+                isLike: true
+              },
+              headers: {
+                'Authorization': token
+              }
+            })
           } else {
             comment.Likes--;
+            axios.put(`/Comment/${id}/UndoLikeOrDislikeComment`, {
+              params: {
+                CommentID: commentID,
+                isLike: true
+              },
+              headers: {
+                'Authorization': token
+              }
+            })
           }
         }
         // 如果有回复，递归切换 Like 属性值
@@ -538,6 +583,8 @@ export default {
     },
     // 处理回复中的评论的 Like 属性值
     toggleLikeInReplies(replies, commentID) {
+      const id = this.$route.params.id;
+      const token = localStorage.getItem('token');
       for (let reply of replies) {
         if (reply.CommentID === commentID) {
           // 找到对应的回复后切换 Like 属性值
@@ -548,8 +595,26 @@ export default {
           }
           if (reply.Like) {
             reply.Likes++;
+            axios.put(`/Comment/${id}/LikeOrDislikeComment`, {
+              params: {
+                CommentID: commentID,
+                isLike: true
+              },
+              headers: {
+                'Authorization': token
+              }
+            })
           } else {
             reply.Likes--;
+            axios.put(`/Comment/${id}/UndoLikeOrDislikeComment`, {
+              params: {
+                CommentID: commentID,
+                isLike: true
+              },
+              headers: {
+                'Authorization': token
+              }
+            })
           }
         }
         // 如果回复有回复，递归切换 Like 属性值
@@ -560,6 +625,8 @@ export default {
     },
     // 根据 CommentID 切换对应评论的 Dislike 属性值，并处理互斥关系
     toggleDislike(commentID) {
+      const id = this.$route.params.id;
+      const token = localStorage.getItem('token');
       // 1. 遍历 commentsList 查找对应的 CommentID
       for (let comment of this.commentsList) {
         if (comment.CommentID === commentID) {
@@ -571,8 +638,26 @@ export default {
           }
           if (comment.Dislike) {
             comment.Dislikes++;
+            axios.put(`/Comment/${id}/LikeOrDislikeComment`, {
+              params: {
+                CommentID: commentID,
+                isLike: true
+              },
+              headers: {
+                'Authorization': token
+              }
+            })
           } else {
             comment.Dislikes--;
+            axios.put(`/Comment/${id}/UndoLikeOrDislikeComment`, {
+              params: {
+                CommentID: commentID,
+                isLike: true
+              },
+              headers: {
+                'Authorization': token
+              }
+            })
           }
         }
         // 如果有回复，递归切换 Dislike 属性值
@@ -583,6 +668,8 @@ export default {
     },
     // 处理回复中的评论的 Dislike 属性值
     toggleDislikeInReplies(replies, commentID) {
+      const id = this.$route.params.id;
+      const token = localStorage.getItem('token');
       for (let reply of replies) {
         if (reply.CommentID === commentID) {
           // 找到对应的回复后切换 Dislike 属性值
@@ -593,8 +680,26 @@ export default {
           }
           if (reply.Dislike) {
             reply.Dislikes++;
+            axios.put(`/Comment/${id}/LikeOrDislikeComment`, {
+              params: {
+                CommentID: commentID,
+                isLike: false
+              },
+              headers: {
+                'Authorization': token
+              }
+            })
           } else {
             reply.Dislikes--;
+            axios.put(`/Comment/${id}/UndoLikeOrDislikeComment`, {
+              params: {
+                CommentID: commentID,
+                isLike: false
+              },
+              headers: {
+                'Authorization': token
+              }
+            })
           }
         }
         // 如果回复有回复，递归切换 Dislike 属性值
@@ -603,21 +708,90 @@ export default {
         }
       }
     },
-findCommentID(commentID, comment) {
-  if (comment.CommentID === commentID) {
-    return true;
-  }
-
-  if (comment.Replies && comment.Replies.length > 0) {
-    for (let reply of comment.Replies) {
-      if (this.findCommentID(commentID, reply)) {
+    findCommentID(commentID, comment) {
+      if (comment.CommentID === commentID) {
         return true;
       }
-    }
-  }
-  return false;
-}
 
+      if (comment.Replies && comment.Replies.length > 0) {
+        for (let reply of comment.Replies) {
+          if (this.findCommentID(commentID, reply)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    getDetail(token) {
+      const id = this.$route.params.id;
+      axios.get(`/yanxi/video/${id}/VideoDetail`, {
+        headers: {
+          'Authorization': token
+        }
+      }).then(res => {
+        const data = res.data.data;
+        console.log(data);
+        this.videoTitle = data.Title;
+        this.videoDescription = data.Description;
+        this.Likes = data.Likes;
+        this.CntViews = data.CntViews;
+        this.CntShares = data.CntShares;
+        this.CntFavorites = data.CntFavorites;
+        this.Duration = data.Duration;
+        this.Title = data.Title;
+        this.Description = data.Description;
+        this.Shells = data.Shells;
+        this.videoTime = this.formatDateTime(data.CreatedAt);
+        // this.videoTags = data.Tags;
+      });
+    },
+    getComments(token) {
+      const id = this.$route.params.id;
+      axios.get(`/yanxi/video/${id}/Comments`, {
+        headers: {
+          'Authorization': token
+        },
+        params: {
+          commentNums: 20,
+          offset: 0,
+        }
+      }).then(res => {
+        const data = res.data.data;
+        console.log(data);
+        this.commentsList = data;
+        this.commentsList = this.commentsList.map(item => {
+          return {
+            ...item,
+            CreatedAt: this.formatTimeAgo(item.CreatedAt),
+            Replies: item.Replies.map(reply => {
+              return {
+                ...reply,
+                CreatedAt: this.formatTimeAgo(reply.CreatedAt),
+              }
+            })
+          }
+        })
+        console.log(this.commentsList);
+      });
+    },
+    addComment(commentID, content) {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('CommentContent', content);
+      axios.post(`/yanxi/Comment/${this.videoID}/Comment`, formData,{
+        params: {
+          To: commentID,
+        },
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'multipart/form-data',
+        }
+      }).then(res => {
+        if (res.data.code === 200)
+          console.log('评论成功');
+        getComments(token);
+      });
+    }
   }
 
 }
@@ -896,6 +1070,7 @@ findCommentID(commentID, comment) {
   display:flex;
   align-items: center;
   margin-left:55px;
+  width:100%;
  }
 
  .replyBtn:hover{
@@ -948,6 +1123,7 @@ findCommentID(commentID, comment) {
     display: grid;
     grid-template-columns: 12rem 14rem;
     column-gap: 1rem;
+    margin-bottom: 1rem;
   }
 
   .videoRightContainer{
@@ -964,7 +1140,6 @@ findCommentID(commentID, comment) {
   .videoRightFooter{
     display: flex;
     align-items: center;
-    border: 1px solid #e8e8e8;
     font-size: 11px;
   }
   
@@ -972,5 +1147,14 @@ findCommentID(commentID, comment) {
     margin-right: 10px;
     display: flex;
     align-items: center;
+  }
+
+  .videoTime{
+    display: flex;
+    position: absolute;
+    transform: translate(9.5rem,4.875rem);
+    background-color: rgba(0, 0, 0, 0.3);
+    color:white;
+    z-index:1;
   }
 </style>

@@ -238,9 +238,26 @@ export default {
                 this.videoList1 = videodata
                 this.videoList1 = this.videoList1.map(item => ({
                     ...item,
-                    Cover: `data:image/png;base64,${item.Cover}`,
+                    Cover: ``,
                     Duration: this.formatTime(item.Duration)
                 }));
+                for (let item of this.videoList1) {
+                    const fileExtension = item.CoverPath.split('.').pop();
+                    axios.get('/yanxi/video/VideoCover', {
+                        params: {
+                            coverPath: item.CoverPath
+                        },
+                        responseType: 'arraybuffer'
+                    }).then(res => {
+                        const binaryData = res.data;
+                        const base64String = btoa(
+                            new Uint8Array(binaryData)
+                                .reduce((data, byte) => data + String.fromCharCode(byte), '')
+                        );
+                        item.Cover = `data:image/${fileExtension};base64,${base64String}`;
+                    }
+                    )
+                }
             })
         },
         handleEnter() {

@@ -23,7 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 src/assets/*.mp4
-src/assets/*.jpg
-src/assets/*.css
-src/assets/*.json
+
+
 src/assets/*.avi

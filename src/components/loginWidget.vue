@@ -62,7 +62,6 @@ export default {
       const formData = new URLSearchParams()
       formData.append('Username', this.account)
       formData.append('password', this.password)
-
       axios({
         method: 'post',
         url: '/yanxi/User/Login',
@@ -85,7 +84,7 @@ export default {
           const payload = JSON.parse(atob(parts[1]));
           console.log(payload.userId)
           localStorage.setItem('userId', payload.userId)
-
+          ElMessage.success('登录成功');
         }
       })
     },
@@ -128,7 +127,7 @@ export default {
       formData.append('Signature', Signature)
 
         console.log('验证码正确');
-        ElMessage.success('这是一条成功消息');
+        ElMessage.success('验证码正确');
 
         axios({
         method: 'post',
@@ -137,6 +136,7 @@ export default {
       }).then((res) => {
         if (res.data.code === 200) {
           console.log('注册成功')
+          ElMessage.success('注册成功');
         }
       })
     },

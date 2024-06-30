@@ -29,82 +29,80 @@
                 视频上传成功
             </div>
         </div>
-    
+
         <div v-if="uploading || uploadSuccess">
             <div :style="{ fontSize: '16px', fontWeight: 'bold' }">
                 <p>基本设置</p>
             </div>
             <div class="cover">
-                <span>
+                <span style="margin-right: 6rem">
                     <span style="color:red;margin-right:5px">*</span>
                     <span>封面</span>
                 </span>
-                <div v-if="frames.length" class="frame-container">
-                    <img v-for="(frame, index) in frames"
-                        :key="index"
-                        :src="frame"
-                        class="frame">
-                </div>
-                <div v-else>
-                    <p>正在提取关键帧...</p>
-                </div>
+                <el-upload class="avatar-uploader" :show-file-list="false">
+                    <img :src="imageUrl" class="avatar" />
+                    <el-icon class="avatar-uploader-icon">
+                        <Plus />
+                    </el-icon>
+                </el-upload>
             </div>
-    
+
             <div class="Title">
                 <span style="margin-right:6rem">
                     <span style="color:red;margin-right:5px">*</span>
                     <span>标题</span>
                 </span>
-    
-                <el-input placeholder="请输入标题" v-model="title" :style="{ width: '50rem',height:'2.66rem' }" maxlength="80"
-                    show-word-limit></el-input>
+
+                <el-input placeholder="请输入标题" v-model="title" :style="{ width: '50rem', height: '2.66rem' }"
+                    maxlength="80" show-word-limit></el-input>
             </div>
-    
-    
+
+
             <div class="classify">
                 <span style="margin-right:6rem">
                     <span style="color:red;margin-right:5px">*</span>
                     <span>分类</span>
                 </span>
-    
-                <el-select v-model="classify" clearable placeholder="Select" :style="{width:'6rem',height:'2.66rem'}">
+
+                <el-select v-model="classify" clearable placeholder="Select" :style="{ width: '6rem', height: '2.66rem' }">
                     <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"
                         :style="{ paddingLeft: '2rem' }" />
                 </el-select>
             </div>
-    
+
             <div class="tags">
                 <span style="margin-right:6rem">
                     <span style="color:red;margin-right:5px">*</span>
                     <span>标签</span>
                 </span>
-    
+
                 <el-input v-model="input" placeholder="按回车添加Enter添加标签" @keyup.enter.native="handleAddTag" :style="{
-                    width: '50rem', height: '2.66rem' }">
+                    width: '50rem', height: '2.66rem'
+                }">
                     <template #prefix>
                         <el-tag v-for=" (tag, index) in tags" :key="index" closable @close="handleCloseTag(index)">
                             {{ tag }}
                         </el-tag>
                     </template>
                     <template #suffix>
-                        还可以添加{{ maxNum-this.tags.length }}个标签
+                        还可以添加{{ maxNum - this.tags.length }}个标签
                     </template>
                 </el-input>
             </div>
-    
+
             <div class="desc">
                 <span style="margin-right:6rem">
                     <span style="margin-left:0.6rem">简介</span>
                 </span>
-    
+
                 <el-input type="textarea" placeholder="请输入视频简介" v-model="desc" rows="7" maxlength="2000" show-word-limit
                     :style="{ width: '50rem', height: '10.33rem' }">
                 </el-input>
             </div>
 
             <div class="footerBtn">
-                <el-button type="primary" :style="{width:'7.66rem',marginRight:'1rem',height:'2.66rem'}">投稿</el-button>
-                <el-button type="default"  :style="{width:'7.66rem',height:'2.66rem'}">取消</el-button>
+                <el-button type="primary" :style="{ width: '7.66rem', marginRight: '1rem', height: '2.66rem' }">投稿</el-button>
+                <el-button type="default" :style="{ width: '7.66rem', height: '2.66rem' }">取消</el-button>
             </div>
         </div>
     </div>
@@ -115,7 +113,7 @@ import { UploadFilled } from '@element-plus/icons-vue';
 // import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 
 // const ffmpeg = createFFmpeg({ log: true });
-
+import { Plus } from '@element-plus/icons-vue'
 export default {
     components: {
         UploadFilled,
@@ -239,62 +237,89 @@ export default {
 </script>
 
 <style scoped>
-    *{
-        margin: 0;
-        padding: 0;
-    }
-    
-    .cover{
-        height: 8rem;
-        display: flex;
-        align-items: center;
-    }
+* {
+    margin: 0;
+    padding: 0;
+}
 
-    .frame-container {
-        display: flex;
-        flex-wrap: wrap;
-    }
+.cover {
+    height: 8rem;
+    display: flex;
+    align-items: center;
+}
 
-    .frame {
-        width: 100px;
-        height: auto;
-        margin: 10px;
-    }
+.frame-container {
+    display: flex;
+    flex-wrap: wrap;
+}
 
-    .Title{
-        height: 4rem;
-        display: flex;
-        align-items: center;
-        margin-top: 1rem;
-    }
+.frame {
+    width: 100px;
+    height: auto;
+    margin: 10px;
+}
 
-    .classify{
-        height: 4rem;
-            display: flex;
-            align-items: center;
-            margin-top: 1rem;
-    }
+.Title {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}
 
-    .tags{
-        height: 4rem;
-            display: flex;
-            align-items: center;
-            margin-top: 1rem;
-    }
+.classify {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}
 
-    .desc{
-        height: 10.33rem;
-        display: flex;
-        margin-top: 1rem;
-    }
+.tags {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}
 
-    .detail-container{
-        margin-left: 15rem;
-        width: 73.3rem;
-    }
+.desc {
+    height: 10.33rem;
+    display: flex;
+    margin-top: 1rem;
+}
 
-    .footerBtn{
-         margin-top:3rem;
-         margin-left: 8rem;
-    }
+.detail-container {
+    margin-left: 15rem;
+    width: 73.3rem;
+}
+
+.footerBtn {
+    margin-top: 3rem;
+    margin-left: 8rem;
+}
+
+.avatar-uploader .avatar {
+    width: 4rem;
+    height: 4rem;
+    display: block;
+}
+
+.avatar-uploader .el-upload {
+    border: 1px dashed var(--el-border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+    border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    text-align: center;
+}
 </style>

@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/yanxi': {
-        target: 'http://3eef688c.r28.cpolar.top/',  // 要代理的目标地址
+        target: 'http://78a9d61f.r11.cpolar.top/',  // 要代理的目标地址
         changeOrigin: true,
          rewrite: (path) => path.replace(/^\/yanxi/, '')
       }
